@@ -25,7 +25,7 @@
     <link rel="stylesheet" href="/static/main.css">
     <title>Occamy</title>
 </head>
-<body class="prose md:prose-xl mx-auto min-h-screen flex flex-col gap-12 px-2">
+<body class="prose md:prose-md mx-auto min-h-screen flex flex-col gap-12 px-2">
 
     <header class="container">
         <nav class="flex justify-between items-center py-3">
@@ -36,9 +36,49 @@
     </header>
 
     <main class="flex flex-col justify-center grow mb-3">
-        <div class="block w-full relative">
-            <form action="/upload" method="post" x-data="{ file: false }" enctype="multipart/form-data">
+        <div class=" block w-full relative">
+            <form class="flex flex-col justify-center items-center" x-cloak
+                  @submit="$event.preventDefault();"
+                  x-data="{
+                      file: false,
+                      files: [],
+                      previewImage: null,
+                      fileInputChanged($event) {
+                        files = Object.values($event.target.files)
+                        this.file = files[0]
+                        this.previewImage = URL.createObjectURL(this.file)
+                        console.log(this.file.name)
+                      },
+                      submit() {
+                        if (!this.file) {
+                            alert('Please select a file to upload.');
+                            return;
+                        }
+                        // alert('File has been uploaded.');
+                        axios.post('/stash', this.file)
+                            .then(response => {
+                                console.log(response.data);
+                            })
+                            .catch(error => {
+                                console.error(error);
+                            });
+                      }
+                  }"
+                  enctype="multipart/form-data">
 
+                <input type="text" name="alex">
+
+                <input type="file" name="file" x-ref="fileInput" x-on:change="fileInputChanged($event)">
+
+                <img x-show="previewImage" :src="previewImage" alt="Preview Image" class="w-1/2 h-auto">
+
+                <p x-text="file ? 'File has been uploaded.' : 'No file uploaded yet.'"></p>
+
+                <button class="mt-4 py-3 px-6 bg-red-100"
+                        type="submit"
+                    @click="submit()">
+                    Compress Image
+                </button>
             </form>
         </div>
     </main>
@@ -48,6 +88,8 @@
     </footer>
 
     <script src="/static/main.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js" defer></script>
+    <script src="//unpkg.com/alpinejs" defer></script>
 
 </body>
 </html>
