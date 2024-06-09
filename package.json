@@ -1,0 +1,24 @@
+{
+  "name": "occamy",
+  "version": "1.0.0",
+  "description": "A magical beast that can shrink and enlarge images from your browser",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/zapalblizh/Occamy.git"
+  },
+  "keywords": [
+    "occamy",
+    "image",
+    "optimisation"
+  ],
+  "author": "Aleksandr Zapparov <alexander@zapparov.dev>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zapalblizh/Occamy/issues"
+  },
+  "homepage": "https://github.com/zapalblizh/Occamy#readme"
+}
