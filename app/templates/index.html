@@ -3,19 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Flask Application</title>
-    <!-- Add your CSS link here -->
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                }
+            },
+            plugins: [
+                ({ addComponents, theme }) => {
+                    addComponents({
+                        ".container": {
+                            "@apply px-4 max-w-screen-2xl mx-auto": {},
+                        },
+                    });
+                },
+            ]
+        }
+    </script>
+    <link rel="stylesheet" href="/static/main.css">
+    <title>Occamy</title>
 </head>
-<body>
-    <header>
-        <h1>Welcome to My Flask Application</h1>
+<body class="prose md:prose-xl mx-auto min-h-screen flex flex-col gap-12 px-2">
+
+    <header class="container">
+        <nav class="flex justify-between items-center py-3">
+            <a class="text-3xl font-bold no-underline" href="/">Occamy</a>
+
+            <img class="!m-0 rounded-full" height="70" width="70" src="/static/occamy.jpeg" alt="Magical Creature (Occamy) that can shrink down or enlarge based on the space available">
+        </nav>
     </header>
-    <main>
-        <p>This is a basic Flask application.</p>
+
+    <main class="flex flex-col justify-center grow mb-3">
+        <div class="block w-full relative">
+            <form action="/upload" method="post" x-data="{ file: false }" enctype="multipart/form-data">
+
+            </form>
+        </div>
     </main>
+
     <footer>
         <p>Copyright © 2024</p>
     </footer>
-    <!-- Add your JS link here -->
+
+    <script src="/static/main.js"></script>
+
 </body>
 </html>
+
+<!-- Future include drag and drop upload functionality -->
+<!--
+<div class="col-span-full">
+    <div class="flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+        <div class="flex flex-col gap-3 text-center text-md">
+            <svg class="mx-auto size-20 text-gray-300" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z" clip-rule="evenodd" />
+            </svg>
+            <div class="flex items-center leading-6 gap-x-1.5 text-gray-600">
+                <label for="file-upload" class="relative cursor-pointer rounded-md bg-white font-semibold text-blue-600 hover:text-blue-500">
+                    <span>Upload a file</span>
+                    <input id="file-upload" name="file-upload" class="sr-only" type="file" x-on:input="file = true">
+                    <span x-text="file ? 'File has been uploaded.' : 'No file uploaded yet.'"></span>
+                </label>
+                <p class="!m-0">or drag and drop</p>
+            </div>
+            <p class="text-sm leading-5 text-gray-600">PNG, JPG, GIF up to 10MB</p>
+        </div>
+    </div>
+</div>
+-->
