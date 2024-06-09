@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/zapalblizh/Occamy/issues"
   },
-  "homepage": "https://github.com/zapalblizh/Occamy#readme"
+  "homepage": "https://github.com/zapalblizh/Occamy#readme",
+  "dependencies": {
+    "python3": "^0.0.1"
+  }
 }
