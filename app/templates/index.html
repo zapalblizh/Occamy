@@ -34,7 +34,6 @@
             <img class="!m-0 rounded-full" height="70" width="70" src="/static/occamy.jpeg" alt="Magical Creature (Occamy) that can shrink down or enlarge based on the space available">
         </nav>
     </header>
-
     <main class="flex flex-col justify-center grow mb-3">
         <div class=" block w-full relative">
             <form class="flex flex-col justify-center items-center" x-cloak
@@ -42,6 +41,7 @@
                   x-data="{
                       file: false,
                       files: [],
+                      formData: null,
                       previewImage: null,
                       fileInputChanged($event) {
                         files = Object.values($event.target.files)
@@ -54,8 +54,20 @@
                             alert('Please select a file to upload.');
                             return;
                         }
+                        // allow only jpeg jpg png
+                        if (!['image/jpeg', 'image/jpg', 'image/png'].includes(this.file.type)) {
+                            alert('Please select a jpeg, jpg, or png file.');
+                            return;
+                        }
+                        this.formData = new FormData();
+                        this.formData.append('file', this.file);
+
                         // alert('File has been uploaded.');
-                        axios.post('/stash', this.file)
+                        axios.post('/api/upload', this.formData, {
+                                headers: {
+                                    'Content-Type': 'multipart/form-data'
+                                }
+                            })
                             .then(response => {
                                 console.log(response.data);
                             })
@@ -89,6 +101,7 @@
 
     <script src="/static/main.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="//unpkg.com/alpinejs" defer></script>
 
 </body>
