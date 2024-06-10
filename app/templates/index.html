@@ -43,6 +43,7 @@
                       files: [],
                       formData: null,
                       previewImage: null,
+                      compressedImage: null,
                       fileInputChanged($event) {
                         files = Object.values($event.target.files)
                         this.file = files[0]
@@ -69,7 +70,8 @@
                                 }
                             })
                             .then(response => {
-                                console.log(response.data);
+                                this.compressedImage = 'data:image/png;base64,' + response.data.image;
+                                <!-- console.log(response.data); -->
                             })
                             .catch(error => {
                                 console.error(error);
@@ -82,8 +84,10 @@
 
                 <input type="file" name="file" x-ref="fileInput" x-on:change="fileInputChanged($event)">
 
-                <img x-show="previewImage" :src="previewImage" alt="Preview Image" class="w-1/2 h-auto">
-
+                <div class="flex justify-center gap-8">
+                    <img x-show="previewImage" :src="previewImage" alt="Preview Image" class="w-1/2 h-auto">
+                    <img x-show="compressedImage" :src="compressedImage" alt="Compressed Image" class="w-1/2 h-auto">
+                </div>
                 <p x-text="file ? 'File has been uploaded.' : 'No file uploaded yet.'"></p>
 
                 <button class="mt-4 py-3 px-6 bg-red-100"

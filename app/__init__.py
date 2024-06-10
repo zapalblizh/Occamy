@@ -1,8 +1,11 @@
 import os
 import PIL
+import json
+import base64
 from PIL import Image
-from flask import Flask, flash, request, redirect, render_template, url_for
+from flask import Flask, jsonify, send_file, request, redirect, render_template, url_for
 from pprint import pp
+from io import BytesIO
 from werkzeug.utils import secure_filename
 
 # import abort
@@ -42,13 +45,19 @@ def upload():
 
         compressedName = 'compressed-image' + file_ext
 
-        print("The original size of Image is: ", round(len(compressed_image.fp.read())/1024,2), "KB")
+        # print("The original size of Image is: ", round(len(compressed_image.fp.read())/1024,2), "KB")
 
         compressedPath = os.path.join(os.path.join(os.getcwd(), "app/static/images/compressed"), compressedName)
 
         compressed_image.save(compressedPath, quality=20, optimize=True)
 
         with Image.open(compressedPath) as compressed_image:
-            print("The compressed size of Image is: ", round(len(compressed_image.fp.read())/1024,2), "KB")
+            # print("The compressed size of Image is: ", round(len(compressed_image.fp.read())/1024,2), "KB")
+
+            buffered = BytesIO()
+            compressed_image.save(buffered, format="PNG")
+            img_str = base64.b64encode(buffered.getvalue())
+
+            return jsonify({'image': img_str.decode('utf-8')}), 200
 
     return '', 204
