@@ -1,2 +1,4 @@
 /flask_session
 package-lock.json
+/app/static/images/uploads
+/app/static/images/compressed
