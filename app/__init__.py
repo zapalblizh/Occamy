@@ -83,7 +83,12 @@ def upload():
                 'image': img_str.decode('utf-8'),
                 'previewSize': upload_file_size,
                 'compressedSize': compressed_file_size,
-                'percentage': percentage
+                'percentage': percentage,
+                'filename': compressedName
             }), 200
 
     return '', 204
+
+@app.route('/download/<filename>')
+def download_file(filename):
+    return send_file('/app/static/images/compressed/'+filename, as_attachment=True)

@@ -42,6 +42,7 @@
                       file: false,
                       dragover: false,
                       compressedFile: false,
+                      filename: null,
                       files: [],
                       formData: null,
                       previewImage: null,
@@ -64,7 +65,13 @@
                           }
                       },
                       download() {
-
+                      // save image this.compressedImage to user
+                        const a = document.createElement('a');
+                        a.href = `data:image/png;base64,${this.compressedImage}`;
+                        a.download = this.filename;
+                        a.click();
+                        // remove
+                        a.remove();
                       },
                       submit() {
                         if (!this.file) {
@@ -86,7 +93,8 @@
                                 }
                             })
                             .then(response => {
-                                this.compressedImage = 'data:image/png;base64,' + response.data.image;
+                                this.compressedImage = response.data.image;
+                                this.filename = response.data.filename;
                                 this.compressedFile = true;
                                 this.previewSize = response.data.previewSize;
                                 this.compressedSize = response.data.compressedSize;
@@ -131,7 +139,7 @@
                         <img x-bind:class="{ 'w-1/2': !compressedImage }" x-show="previewImage" :src="previewImage" alt="Preview Image" class="h-auto !m-0">
                     </div>
 
-                    <img x-cloak x-show="compressedImage" :src="compressedImage" alt="Compressed Image" class="flex justify-center h-auto !m-0">
+                    <img x-cloak x-show="compressedImage" :src="`data:image/png;base64,`+compressedImage" alt="Compressed Image" class="flex justify-center h-auto !m-0">
 
                     <div class="flex items-end"  x-show="previewSize">
                         <p class="!m-0 text-sm" x-text="previewSize"></p>
@@ -144,13 +152,12 @@
                 </div>
 
                 <button x-show="!compressedFile" class="mt-4 py-3 px-6 bg-red-100"
-                        type="submit"
-                        @click="submit()">
+                        type="submit" @click="submit()">
                     Compress Image
                 </button>
 
                 <button x-show="compressedFile" class="mt-4 py-3 px-6 bg-red-300"
-                        type="submit" @click="download()">
+                        @click="download()" :download="filename" type="button">
                     Download Image
                 </button>
             </form>
