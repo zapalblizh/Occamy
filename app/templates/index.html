@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+  <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -35,7 +35,7 @@
         </nav>
     </header>
     <main class="flex flex-col justify-center grow mb-3">
-        <div class=" block w-full relative">
+        <div class="block w-full relative">
             <form class="flex flex-col justify-center items-center" x-cloak
                   @submit="$event.preventDefault();"
                   x-data="{
@@ -46,6 +46,9 @@
                       formData: null,
                       previewImage: null,
                       compressedImage: null,
+                      previewSize: null,
+                      compressedSize: null,
+                      percentage: null,
                       fileInputChanged($event) {
                         files = Object.values($event.target.files)
                         this.file = files[0]
@@ -59,6 +62,9 @@
                             this.previewImage = URL.createObjectURL(this.file);
                             // console.log(this.file.name);
                           }
+                      },
+                      download() {
+
                       },
                       submit() {
                         if (!this.file) {
@@ -82,7 +88,9 @@
                             .then(response => {
                                 this.compressedImage = 'data:image/png;base64,' + response.data.image;
                                 this.compressedFile = true;
-                                <!-- console.log(response.data); -->
+                                this.previewSize = response.data.previewSize;
+                                this.compressedSize = response.data.compressedSize;
+                                this.percentage = response.data.percentage;
                             })
                             .catch(error => {
                                 console.error(error);
@@ -105,17 +113,17 @@
                                 </label>
                                 <p class="!m-0">or drag and drop</p>
                             </div>
-                            <p class="text-sm leading-5 text-gray-600">PNG, JPG, GIF up to 10MB</p>
+                            <p class="text-sm leading-5 text-gray-600">PNG, JPG, JPEG up to 15MB</p>
                         </div>
                     </div>
                 </div>
 
-                <div x-bind:class="{ 'grid-cols-2': compressedImage }" class="grid gap-y-5 gap-x-3 text-xl font-semibold">
-                    <div x-show="previewImage" class="text-center">
+                <div x-bind:class="{ 'grid-cols-2': compressedImage }" class="grid gap-y-3 gap-x-3">
+                    <div x-show="previewImage" class="text-xl font-semibold text-center">
                         <p class="!m-0">Uploaded Image</p>
                     </div>
 
-                    <div x-show="compressedImage" class="text-center">
+                    <div x-show="compressedImage" class="text-xl font-semibold text-center">
                         <p class="!m-0">Compressed Image</p>
                     </div>
 
@@ -124,8 +132,16 @@
                     </div>
 
                     <img x-cloak x-show="compressedImage" :src="compressedImage" alt="Compressed Image" class="flex justify-center h-auto !m-0">
+
+                    <div class="flex items-end"  x-show="previewSize">
+                        <p class="!m-0 text-sm" x-text="previewSize"></p>
+                    </div>
+
+                    <div class="flex flex-col items-end" x-show="compressedSize">
+                        <p class="!m-0 font-bold text-sm" x-text="'-' + percentage + '%'"></p>
+                        <p class="!m-0 text-sm" x-text="compressedSize"></p>
+                    </div>
                 </div>
-                <div class="grid grid-cols-2"></div>
 
                 <button x-show="!compressedFile" class="mt-4 py-3 px-6 bg-red-100"
                         type="submit"
@@ -152,25 +168,3 @@
 
 </body>
 </html>
-
-<!-- Future include drag and drop upload functionality -->
-<!--
-<div class="col-span-full">
-    <div class="flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-        <div class="flex flex-col gap-3 text-center text-md">
-            <svg class="mx-auto size-20 text-gray-300" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z" clip-rule="evenodd" />
-            </svg>
-            <div class="flex items-center leading-6 gap-x-1.5 text-gray-600">
-                <label for="file-upload" class="relative cursor-pointer rounded-md bg-white font-semibold text-blue-600 hover:text-blue-500">
-                    <span>Upload a file</span>
-                    <input id="file-upload" name="file-upload" class="sr-only" type="file" x-on:input="file = true">
-                    <span x-text="file ? 'File has been uploaded.' : 'No file uploaded yet.'"></span>
-                </label>
-                <p class="!m-0">or drag and drop</p>
-            </div>
-            <p class="text-sm leading-5 text-gray-600">PNG, JPG, GIF up to 10MB</p>
-        </div>
-    </div>
-</div>
--->

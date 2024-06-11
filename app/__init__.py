@@ -2,14 +2,23 @@ import os
 import PIL
 import json
 import base64
+import math
 from PIL import Image
 from flask import Flask, jsonify, send_file, request, redirect, render_template, url_for
 from pprint import pp
 from io import BytesIO
 from werkzeug.utils import secure_filename
 
-# import abort
 from werkzeug.exceptions import abort
+
+def format_file_size(size_in_bytes):
+    if size_in_bytes == 0:
+        return "0 bytes"
+    size_name = ("bytes", "KB", "MB")
+    i = int(math.floor(math.log(max(size_in_bytes, 1), 1024)))
+    p = math.pow(1024, i)
+    size = round(size_in_bytes / p, 2)
+    return f"{size} {size_name[i]}"
 
 app = Flask(__name__)
 
@@ -32,32 +41,49 @@ def index():
 
 @app.route('/api/upload', methods=['POST'])
 def upload():
+    if 'file' not in request.files:
+            return jsonify(error="No file part")
+
     data = request.files['file']
+
     dataPath = os.path.join(app.config['UPLOAD_FOLDER'], data.filename)
 
     data.save(dataPath)
 
+    if data.filename == '':
+        return jsonify(error="No selected file")
+
+    if data and os.path.getsize(dataPath) <= 15*1024*1024:  # max 15 MB
+        originalSize = os.path.getsize(dataPath)
+        upload_file_size = format_file_size(originalSize)
+    else:
+        return jsonify(error="File size exceeds 15MB"), 413
+
     file_ext = os.path.splitext(dataPath)[1]
 
     with Image.open(dataPath) as compressed_image:
-        image_height = compressed_image.height
-        image_width = compressed_image.width
-
         compressedName = 'compressed-image' + file_ext
-
-        # print("The original size of Image is: ", round(len(compressed_image.fp.read())/1024,2), "KB")
 
         compressedPath = os.path.join(os.path.join(os.getcwd(), "app/static/images/compressed"), compressedName)
 
         compressed_image.save(compressedPath, quality=20, optimize=True)
 
         with Image.open(compressedPath) as compressed_image:
-            # print("The compressed size of Image is: ", round(len(compressed_image.fp.read())/1024,2), "KB")
+
+            compressedSize = os.path.getsize(compressedPath)
+            compressed_file_size = format_file_size(compressedSize)
+
+            percentage = int((originalSize - compressedSize) / originalSize * 100)
 
             buffered = BytesIO()
             compressed_image.save(buffered, format="PNG")
             img_str = base64.b64encode(buffered.getvalue())
 
-            return jsonify({'image': img_str.decode('utf-8')}), 200
+            return jsonify({
+                'image': img_str.decode('utf-8'),
+                'previewSize': upload_file_size,
+                'compressedSize': compressed_file_size,
+                'percentage': percentage
+            }), 200
 
     return '', 204
