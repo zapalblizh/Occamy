@@ -151,12 +151,12 @@
                     </div>
                 </div>
 
-                <button x-show="!compressedFile" class="mt-4 py-3 px-6 bg-red-100"
+                <button x-show="!compressedFile" class="mt-4 py-3 px-6 bg-blue-200"
                         type="submit" @click="submit()">
                     Compress Image
                 </button>
 
-                <button x-show="compressedFile" class="mt-4 py-3 px-6 bg-red-300"
+                <button x-show="compressedFile" class="mt-4 py-3 px-6 bg-blue-400"
                         @click="download()" :download="filename" type="button">
                     Download Image
                 </button>
