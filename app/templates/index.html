@@ -151,12 +151,12 @@
                     </div>
                 </div>
 
-                <button x-show="!compressedFile" class="mt-4 py-3 px-6 bg-blue-200"
+                <button x-show="!compressedFile" class="mt-4 py-3 px-6 bg-blue-200 font-semibold"
                         type="submit" @click="submit()">
                     Compress Image
                 </button>
 
-                <button x-show="compressedFile" class="mt-4 py-3 px-6 bg-blue-400"
+                <button x-show="compressedFile" class="mt-4 py-3 px-6 bg-blue-400 font-semibold"
                         @click="download()" :download="filename" type="button">
                     Download Image
                 </button>
@@ -164,8 +164,8 @@
         </div>
     </main>
 
-    <footer>
-        <p>Copyright © 2024</p>
+    <footer class="text-lg">
+        <p>© 2024 @zapalblizh</p>
     </footer>
 
     <script src="/static/main.js"></script>
