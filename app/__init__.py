@@ -11,15 +11,6 @@ from werkzeug.utils import secure_filename
 
 from werkzeug.exceptions import abort
 
-def format_file_size(size_in_bytes):
-    if size_in_bytes == 0:
-        return "0 bytes"
-    size_name = ("bytes", "KB", "MB")
-    i = int(math.floor(math.log(max(size_in_bytes, 1), 1024)))
-    p = math.pow(1024, i)
-    size = round(size_in_bytes / p, 2)
-    return f"{size} {size_name[i]}"
-
 app = Flask(__name__)
 
 UPLOAD_FOLDER = os.path.join(os.getcwd(), "app/static/images/uploads")
@@ -34,6 +25,15 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 15 * 1024 * 1024
 
+def format_file_size(size_in_bytes):
+    if size_in_bytes == 0:
+        return "0 bytes"
+    size_name = ("bytes", "KB", "MB")
+    i = int(math.floor(math.log(max(size_in_bytes, 1), 1024)))
+    p = math.pow(1024, i)
+    size = round(size_in_bytes / p, 2)
+    return f"{size} {size_name[i]}"
+
 @app.route("/", methods=["GET"])
 def index():
     return render_template("index.html")
@@ -41,22 +41,17 @@ def index():
 
 @app.route('/api/upload', methods=['POST'])
 def upload():
-    if 'file' not in request.files:
-            return jsonify(error="No file part")
-
     data = request.files['file']
 
     dataPath = os.path.join(app.config['UPLOAD_FOLDER'], data.filename)
 
     data.save(dataPath)
 
-    if data.filename == '':
-        return jsonify(error="No selected file")
-
-    if data and os.path.getsize(dataPath) <= 15*1024*1024:  # max 15 MB
+    if data and os.path.getsize(dataPath) <= 10*1024*1024:  # max 10 MB
         originalSize = os.path.getsize(dataPath)
         upload_file_size = format_file_size(originalSize)
     else:
+        # TODO: add a reset to the form's data if this occurs
         return jsonify(error="File size exceeds 15MB"), 413
 
     file_ext = os.path.splitext(dataPath)[1]
