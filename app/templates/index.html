@@ -54,20 +54,30 @@
                         files = Object.values($event.target.files)
                         this.file = files[0]
                         this.previewImage = URL.createObjectURL(this.file)
-                        // console.log(this.file.name);
                       },
-                      handleDrop: function($event) {
+                      handleDrop($event) {
                           $event.preventDefault();
                           if($event.dataTransfer.items[0].kind === 'file'){
                             this.file = $event.dataTransfer.items[0].getAsFile();
                             this.previewImage = URL.createObjectURL(this.file);
-                            // console.log(this.file.name);
                           }
                       },
+                      resetFormData() {
+                          this.file = false;
+                          this.dragover = false;
+                          this.compressedFile = false;
+                          this.filename = null;
+                          this.files = [];
+                          this.formData = null;
+                          this.previewImage = null;
+                          this.compressedImage = null;
+                          this.previewSize = null;
+                          this.compressedSize = null;
+                          this.percentage = null;
+                      },
                       download() {
-                      // save image this.compressedImage to user
                         const a = document.createElement('a');
-                        a.href = `data:image/png;base64,${this.compressedImage}`;
+                        a.href = this.compressedImage;
                         a.download = this.filename;
                         a.click();
                         // remove
@@ -88,21 +98,24 @@
 
                         // alert('File has been uploaded.');
                         axios.post('/api/upload', this.formData, {
-                                headers: {
-                                    'Content-Type': 'multipart/form-data'
-                                }
-                            })
-                            .then(response => {
-                                this.compressedImage = response.data.image;
-                                this.filename = response.data.filename;
-                                this.compressedFile = true;
-                                this.previewSize = response.data.previewSize;
-                                this.compressedSize = response.data.compressedSize;
-                                this.percentage = response.data.percentage;
-                            })
-                            .catch(error => {
-                                console.error(error);
-                            });
+                            headers: {
+                                'Content-Type': 'multipart/form-data'
+                            }
+                        })
+                        .then(response => {
+                            this.compressedImage = response.data.image;
+                            this.filename = response.data.filename;
+                            this.compressedFile = true;
+                            this.previewSize = response.data.previewSize;
+                            this.compressedSize = response.data.compressedSize;
+                            this.percentage = response.data.percentage;
+                        })
+                        .catch(error => {
+                            if (error.response) {
+                                this.resetFormData();
+                            }
+                            console.error(error);
+                        });
                       }
                   }"
                   enctype="multipart/form-data">
@@ -117,11 +130,11 @@
                             <div class="flex items-center leading-6 gap-x-1.5 text-gray-600">
                                 <label for="file-upload" class="relative cursor-pointer rounded-md bg-white font-semibold text-blue-600 hover:text-blue-500">
                                     <span>Upload a file</span>
-                                    <input class="sr-only" id="file-upload" type="file" name="file" x-ref="fileInput" x-on:change="fileInputChanged($event)">
+                                    <input class="sr-only" id="file-upload" type="file" accept="image/png, image/jpg, image/jpeg" name="file" x-ref="fileInput" x-on:change="fileInputChanged($event)">
                                 </label>
                                 <p class="!m-0">or drag and drop</p>
                             </div>
-                            <p class="text-sm leading-5 text-gray-600">PNG, JPG, JPEG up to 15MB</p>
+                            <p class="text-sm leading-5 text-gray-600">PNG, JPG, JPEG up to 10MB</p>
                         </div>
                     </div>
                 </div>
@@ -139,7 +152,7 @@
                         <img x-bind:class="{ 'w-1/2': !compressedImage }" x-show="previewImage" :src="previewImage" alt="Preview Image" class="h-auto !m-0">
                     </div>
 
-                    <img x-cloak x-show="compressedImage" :src="`data:image/png;base64,`+compressedImage" alt="Compressed Image" class="flex justify-center h-auto !m-0">
+                    <img x-cloak x-show="compressedImage" :src="compressedImage" alt="Compressed Image" class="flex justify-center h-auto !m-0">
 
                     <div class="flex items-end"  x-show="previewSize">
                         <p class="!m-0 text-sm" x-text="previewSize"></p>
