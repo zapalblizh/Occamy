@@ -46,20 +46,46 @@
                       files: [],
                       formData: null,
                       previewImage: null,
+                      newPreviewPath: null,
                       compressedImage: null,
                       previewSize: null,
                       compressedSize: null,
                       percentage: null,
+                      newPreview: false,
                       fileInputChanged($event) {
                         files = Object.values($event.target.files)
                         this.file = files[0]
                         this.previewImage = URL.createObjectURL(this.file)
+
+                        this.$watch('newPreview', value => {
+                            if (value) {
+                                let imgElement = document.querySelector('.img');
+
+                                if (imgElement) {
+                                imgElement.src = this.newPreviewPath;
+                                }
+
+                                URL.revokeObjectURL(this.previewImage);
+                            }
+                        });
                       },
                       handleDrop($event) {
                           $event.preventDefault();
                           if($event.dataTransfer.items[0].kind === 'file'){
                             this.file = $event.dataTransfer.items[0].getAsFile();
                             this.previewImage = URL.createObjectURL(this.file);
+
+                            this.$watch('newPreview', value => {
+                                if (value) {
+                                    let imgElement = document.querySelector('.img');
+
+                                    if (imgElement) {
+                                        imgElement.src = this.newPreviewPath;
+                                    }
+
+                                    URL.revokeObjectURL(this.previewImage);
+                                }
+                            });
                           }
                       },
                       resetFormData() {
@@ -74,6 +100,8 @@
                           this.previewSize = null;
                           this.compressedSize = null;
                           this.percentage = null;
+                          this.newPreview =  false;
+                          this.newPreviewPath = null;
                       },
                       download() {
                         const a = document.createElement('a');
@@ -103,6 +131,8 @@
                             }
                         })
                         .then(response => {
+                            this.newPreviewPath = response.data.preview;
+                            this.newPreview = true;
                             this.compressedImage = response.data.image;
                             this.filename = response.data.filename;
                             this.compressedFile = true;
@@ -149,7 +179,7 @@
                     </div>
 
                     <div class="flex justify-center w-full">
-                        <img x-bind:class="{ 'w-1/2': !compressedImage }" x-show="previewImage" :src="previewImage" alt="Preview Image" class="h-auto !m-0">
+                        <img x-bind:class="{ 'w-1/2': !compressedImage }" x-show="previewImage" :src="previewImage" alt="Preview Image" class="img h-auto !m-0">
                     </div>
 
                     <img x-cloak x-show="compressedImage" :src="compressedImage" alt="Compressed Image" class="flex justify-center h-auto !m-0">

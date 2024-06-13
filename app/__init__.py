@@ -3,6 +3,7 @@ import PIL
 import json
 import base64
 import math
+import uuid
 from PIL import Image
 from flask import Flask, jsonify, send_file, request, redirect, render_template, url_for
 from pprint import pp
@@ -35,6 +36,11 @@ def format_file_size(size_in_bytes):
     size = round(size_in_bytes / p, 2)
     return f"{size} {size_name[i]}"
 
+def generate_filename(filename):
+    _, ext = os.path.splitext(filename)
+    unique_filename = str(uuid.uuid4())
+    return f"{unique_filename}{ext}"
+
 @app.route("/", methods=["GET"])
 def index():
     return render_template("index.html")
@@ -44,9 +50,11 @@ def index():
 def upload():
     data = request.files['file']
 
-    dataPath = os.path.join(app.config['UPLOAD_FOLDER'], data.filename)
-
+    filename = secure_filename(generate_filename(data.filename))
+    dataPath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     data.save(dataPath)
+
+    preview_path = '/static/images/uploads/' + filename
 
     if data and os.path.getsize(dataPath) <= 10*1024*1024:  # max 10 MB
         originalSize = os.path.getsize(dataPath)
@@ -70,6 +78,7 @@ def upload():
 
 
         return jsonify({
+            'preview': preview_path,
             'image': url_path,
             'previewSize': upload_file_size,
             'compressedSize': compressed_file_size,
