@@ -35,6 +35,10 @@
         </nav>
     </header>
     <main class="flex flex-col justify-center grow mb-3">
+        <div class="text-center">
+            <h1 class="text-3xl text-balance">The best Image Compressor you've ever seen</h1>
+            <p>The ultimate magical power to compress your images with Occamy</p>
+        </div>
         <div class="block w-full relative">
             <form class="flex flex-col justify-center items-center" x-cloak
                   @submit="$event.preventDefault();"
@@ -136,7 +140,7 @@
                             this.loading = true;
                             setTimeout(() => {
                                 this.loading = false;
-                            }, 4500);
+                            }, 1000);
                             this.newPreviewPath = response.data.preview;
                             this.newPreview = true;
                             this.compressedImage = response.data.image;
@@ -218,9 +222,16 @@
 
     <footer class="flex justify-between text-lg font-semibold">
         <p>© 2024 <a class="no-underline" href="https://github.com/zapalblizh/" target="_blank">@zapalblizh</a></p>
-        <p x-data="{ date: '' }"
-           x-init="let d = new Date(); date = `${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`"
-           x-text="date"></p>
+        <p x-data="{
+                date: '',
+                setTime() {
+                    let d = new Date();
+                    this.date = `${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`;
+                }
+            }"
+           x-init="setTime()">
+            Time: <span x-text="date"></span>
+        </p>
     </footer>
 
     <script src="/static/main.js"></script>
