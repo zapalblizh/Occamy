@@ -177,8 +177,11 @@
         </div>
     </main>
 
-    <footer class="text-lg">
+    <footer class="flex justify-between text-lg">
         <p>© 2024 @zapalblizh</p>
+        <p x-data="{ date: '' }"
+           x-init="let d = new Date(); date = `${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`"
+           x-text="date"></p>
     </footer>
 
     <script src="/static/main.js"></script>
