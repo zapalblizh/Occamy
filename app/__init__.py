@@ -1,13 +1,11 @@
 import os
 import PIL
 import json
-import base64
 import math
 import uuid
 from PIL import Image
 from flask import Flask, jsonify, send_file, request, redirect, render_template, url_for
 from pprint import pp
-from io import BytesIO
 from werkzeug.utils import secure_filename
 
 from werkzeug.exceptions import abort
@@ -60,7 +58,6 @@ def upload():
         originalSize = os.path.getsize(dataPath)
         upload_file_size = format_file_size(originalSize)
     else:
-        # TODO: add a reset to the form's data if this occurs
         return jsonify(error="File size exceeds 10MB"), 413
 
     file_ext = os.path.splitext(dataPath)[1]
