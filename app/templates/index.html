@@ -40,6 +40,7 @@
                   @submit="$event.preventDefault();"
                   x-data="{
                       file: false,
+                      loading: false,
                       dragover: false,
                       compressedFile: false,
                       filename: null,
@@ -90,6 +91,7 @@
                       },
                       resetFormData() {
                           this.file = false;
+                          this.loading = false;
                           this.dragover = false;
                           this.compressedFile = false;
                           this.filename = null;
@@ -131,6 +133,10 @@
                             }
                         })
                         .then(response => {
+                            this.loading = true;
+                            setTimeout(() => {
+                                this.loading = false;
+                            }, 4500);
                             this.newPreviewPath = response.data.preview;
                             this.newPreview = true;
                             this.compressedImage = response.data.image;
@@ -150,7 +156,7 @@
                   }"
                   enctype="multipart/form-data">
 
-                <div x-show="!file" class="w-full">
+                <div x-show="!file && !loading" class="w-full">
                     <div x-on:dragover.prevent x-on:drop="handleDrop($event)"
                          class="flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                         <div class="flex flex-col gap-3 text-center text-md">
@@ -169,7 +175,10 @@
                     </div>
                 </div>
 
-                <div x-bind:class="{ 'grid-cols-2': compressedImage }" class="grid gap-y-3 gap-x-3">
+                <div x-show="loading" class="flex justify-center">
+                    <div class="w-12 h-12 rounded-full animate-spin border-4 border-solid border-blue-500 border-t-transparent"></div>
+                </div>
+                <div x-show="!loading" x-bind:class="{ 'grid-cols-2': compressedImage }" class="grid gap-y-3 gap-x-3">
                     <div x-show="previewImage" class="text-xl font-semibold text-center">
                         <p class="!m-0">Uploaded Image</p>
                     </div>
@@ -199,7 +208,7 @@
                     Compress Image
                 </button>
 
-                <button x-show="compressedFile" class="mt-4 py-3 px-6 bg-blue-400 font-semibold"
+                <button x-show="compressedFile && !loading" class="mt-4 py-3 px-6 bg-blue-400 font-semibold"
                         @click="download()" :download="filename" type="button">
                     Download Image
                 </button>
@@ -207,8 +216,8 @@
         </div>
     </main>
 
-    <footer class="flex justify-between text-lg">
-        <p>© 2024 @zapalblizh</p>
+    <footer class="flex justify-between text-lg font-semibold">
+        <p>© 2024 <a class="no-underline" href="https://github.com/zapalblizh/" target="_blank">@zapalblizh</a></p>
         <p x-data="{ date: '' }"
            x-init="let d = new Date(); date = `${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`"
            x-text="date"></p>
