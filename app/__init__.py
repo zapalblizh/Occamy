@@ -6,6 +6,7 @@ import uuid
 from PIL import Image
 from flask import Flask, jsonify, send_file, request, redirect, render_template, url_for
 from pprint import pp
+from datetime import datetime
 from werkzeug.utils import secure_filename
 
 from werkzeug.exceptions import abort
@@ -63,7 +64,8 @@ def upload():
     file_ext = os.path.splitext(dataPath)[1]
 
     with Image.open(dataPath) as img:
-        compressedName = 'compressed-image' + file_ext
+        current_time = datetime.now().strftime('-%d-%m-%Y-%H-%M-%S')
+        compressedName = 'compressed-image' + current_time + file_ext
         compressedPath = os.path.join(app.config['COMPRESSED_FOLDER'], compressedName)
         url_path = '/static/images/compressed/' + compressedName
         img.save(compressedPath, optimize=True, quality=20)
