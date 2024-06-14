@@ -226,11 +226,11 @@
                 date: '',
                 setTime() {
                     let d = new Date();
-                    this.date = `${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`;
+                    this.date = d.getFullYear() + ' ' + d.toLocaleString('default', { month: 'long' }) + ' ' + d.getDate();
                 }
             }"
            x-init="setTime()">
-            Time: <span x-text="date"></span>
+            Timestamp: <span x-text="date"></span>
         </p>
     </footer>
 
