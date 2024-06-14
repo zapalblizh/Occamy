@@ -2,7 +2,7 @@
 
 Occamy is a magical and fantastic application made to compress your images.
 
-[Link to my Video]()
+[Link to my Video](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
 
 ## Origin of Occamy
 
