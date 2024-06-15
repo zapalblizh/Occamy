@@ -22,10 +22,17 @@
             ]
         }
     </script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.3/gh-fork-ribbon.min.css"/>
     <link rel="stylesheet" href="/static/main.css">
     <title>Occamy</title>
 </head>
 <body class="prose md:prose-md mx-auto min-h-screen flex flex-col gap-12 px-2">
+
+    <a class="github-fork-ribbon" href="https://github.com/zapalblizh/Occamy/" target="_blank"
+       data-ribbon="Fork me on GitHub" title="Fork me on GitHub">
+        Fork me on GitHub
+    </a>
 
     <header class="container">
         <nav class="flex justify-between items-center py-3">
@@ -116,6 +123,8 @@
                         a.click();
                         // remove
                         a.remove();
+
+                        this.resetFormData();
                       },
                       submit() {
                         if (!this.file) {
@@ -152,6 +161,10 @@
                         })
                         .catch(error => {
                             if (error.response) {
+                                if (error.response.status === 413) {
+                                    alert('File size is too large. Please upload a file less than 10MB.')
+                                }
+
                                 this.resetFormData();
                             }
                             console.error(error);
